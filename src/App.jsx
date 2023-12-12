@@ -12,19 +12,19 @@ const App = () => {
   const [tries, setTries] = useState(10);
   const [showModal, setShowModal] = useState(false);
   const [modalText, setModalText] = useState("");
-  const [infoScale, setInfoScale] = useState(false);
-  const [triesScale, setTriesScale] = useState(false);
+  const [triesAnimate, setTriesAnimate] = useState(null);
+  const [infoTextAnimate, setInfoTextAnimate] = useState(null);
 
   useEffect(() => {
-    setInfoScale(true);
-    setTriesScale(true);
+    setTriesAnimate("scale-125");
+    setInfoTextAnimate("tracking-[3px]");
     const timeoutId = setTimeout(() => {
-      setInfoScale(false);
-      setTriesScale(false);
+      setTriesAnimate(null);
+      setInfoTextAnimate(null);
     }, 300);
-
     return () => clearTimeout(timeoutId);
-  }, [infoText, tries]);
+  }, [tries, infoText]);
+
   const handleSubmit = (e) => {
     // e.preventDefault();
     if (
@@ -62,16 +62,9 @@ const App = () => {
   };
   return (
     <>
-      {showModal && (
-        <Modal
-          setShowModal={setShowModal}
-          playAgain={playAgain}
-          modalText={modalText}
-          setModalText={setModalText}
-        />
-      )}
-      <div className="h-[100svh] bg-gray-800 flex justify-center items-center">
-        <div className="bg-white rounded-lg shadow-md p-8 flex flex-col justify-center gap-4">
+      {showModal && <Modal playAgain={playAgain} modalText={modalText} />}
+      <div className="h-[100svh] bg-gray-800 flex justify-center items-center ">
+        <div className="bg-white rounded-lg shadow-md p-10 flex flex-col justify-center gap-4 relative">
           <h2 className="text-xl font-bold mb-4">Guess the Number</h2>
           <div className="flex flex-col mb-4 gap-4">
             <label htmlFor="guess" className="mb-2">
@@ -88,19 +81,20 @@ const App = () => {
             />
             {infoText && (
               <p
-                className={`mt-4 text-gray-700 transition-transform transform ${
-                  infoScale ? "scale-105" : ""
-                }`}
+                className={`mt-4 text-gray-700 transition-all ${infoTextAnimate}`}
               >
                 {infoText}
               </p>
             )}
+
             <span
-              className={`transition-all ${triesScale ? "tracking-[7px]" : ""}
-              }`}
+              className={`absolute top-5 right-5 flex justify-center items-center ${
+                tries > 4 ? "bg-green-600" : "bg-red-600"
+              } py-4 px-4 rounded-full h-5 w-5 text-white transition-transform  ${triesAnimate}`}
             >
-              Tries Left : {tries}
+              {tries}
             </span>
+
             <div className="flex justify-between">
               <button
                 className="bg-green-500 hover:bg-green-600 transition-colors py-3 px-4 rounded-md"
